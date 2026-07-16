@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this repository is
 
-A GitHub profile README stats generator (adapted from Andrew6rant's profile). A single Python script, [today.py](today.py), queries the GitHub GraphQL API for user stats (age/uptime, commits, stars, repos, followers, lines of code) and rewrites the values in-place inside `dark_mode.svg` and `light_mode.svg`. The profile README just embeds those SVGs.
+A GitHub profile README stats generator (adapted from Andrew6rant's profile). A single Python script, [today.py](today.py), queries the GitHub GraphQL API for user stats (age/uptime, commits, stars, repos, followers, lines of code) and rewrites the values in-place inside `dark_mode.svg` (the only theme — light mode was removed). The profile README just embeds that SVG.
 
 There are no tests and no linter — the GitHub Actions run is the de facto verification.
 
@@ -25,7 +25,7 @@ CI: [.github/workflows/build.yaml](.github/workflows/build.yaml) runs the script
 
 - **LOC cache** (`cache/<sha256-of-username>.txt`): counting lines of code requires paginating every commit of every repo, so results are cached. The file has a 7-line comment header (the `comment_size=7` argument threaded through `loc_query`/`cache_builder`/`commit_counter`), then one line per repo: `sha256(nameWithOwner) total_commits my_commits loc_added loc_deleted`. A repo's LOC is only re-fetched when its commit count changes; if the repo *count* changes, the whole cache is flushed and rebuilt. On API failure mid-run, `force_close_file` saves partial cache state before raising.
 
-- **SVG templating:** the SVGs are hand-authored, terminal-neofetch-style images. `svg_overwrite` locates `<tspan>` elements by `id` (e.g. `commit_data`, `loc_data`, `loc_add`) and replaces their text. Each value has a sibling `<id>_dots` tspan; `justify_format` adjusts the number of dots so columns stay aligned as value widths change. The right column is aligned to exactly 67 characters wide — if you edit SVG text content or the width arguments passed to `justify_format` in `svg_overwrite`, keep that alignment intact (check both SVGs, they must stay in sync).
+- **SVG templating:** the SVGs are hand-authored, terminal-neofetch-style images. `svg_overwrite` locates `<tspan>` elements by `id` (e.g. `commit_data`, `loc_data`, `loc_add`) and replaces their text. Each value has a sibling `<id>_dots` tspan; `justify_format` adjusts the number of dots so columns stay aligned as value widths change. The right column is aligned to exactly 67 characters wide — if you edit SVG text content or the width arguments passed to `justify_format` in `svg_overwrite`, keep that alignment intact.
 
 ## Repo-specific gotchas
 
